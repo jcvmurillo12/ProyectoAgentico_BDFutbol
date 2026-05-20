@@ -25,7 +25,7 @@ from skills.skill_eda import ejecutar_eda
 from skills.skill_modelado import ejecutar_modelado
 
 
-def ejecutar_pipeline_agentico(db_path: str = "premier_league.db") -> Dict[str, Any]:
+def ejecutar_pipeline_agentico(db_path: str = r"C:\Users\juanc\Documents\Universidad\Programacion Analitica De Datos\ProyectoAgentico_BDFutbol\data\premier_league.db") -> Dict[str, Any]:
     """
     Ejecuta el pipeline completo del sistema agéntico.
     
@@ -182,8 +182,8 @@ if __name__ == "__main__":
         python scripts/orchestrator.py
     """
     try:
-        # Ejecutar pipeline con DB en raíz del proyecto
-        resultados = ejecutar_pipeline_agentico('premier_league.db')
+        # Ejecutar pipeline con DB en data/
+        resultados = ejecutar_pipeline_agentico(r"C:\Users\juanc\Documents\Universidad\Programacion Analitica De Datos\ProyectoAgentico_BDFutbol\data\premier_league.db")
         
         # Mostrar información final
         print("\n📌 INFORMACIÓN DE CONTACTO DE RESULTADOS:")
