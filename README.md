@@ -5,7 +5,7 @@ Universidad de Manizales
 
 ## Integrantes
 - Juan C. V. Murillo
-- [Tu nombre aquí]
+- Jhosua Ruiz
 
 ---
 
