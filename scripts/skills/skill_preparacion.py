@@ -18,14 +18,13 @@ from typing import Tuple, Dict, List
 
 def cargar_datos_sqlite(db_path: str) -> pd.DataFrame:
     """
-    Carga datos de la tabla 'partidos' desde una base de datos SQLite.
+    Carga datos de la tabla 'fixtures' desde una base de datos SQLite.
     
     Parámetros:
-        db_path (str): Ruta al archivo SQLite (ej: 'data/premier_league.db')
+        db_path (str): Ruta al archivo SQLite (ej: 'premier_league.db')
     
     Retorna:
-        pd.DataFrame: DataFrame con las columnas:
-            - id: identificador del partido
+        pd.DataFrame: DataFrame con las columnas normalizadas:
             - fecha: fecha del partido
             - equipo_local: nombre del equipo que juega en casa
             - equipo_visitante: nombre del equipo visitante
@@ -34,20 +33,29 @@ def cargar_datos_sqlite(db_path: str) -> pd.DataFrame:
     
     Excepciones:
         FileNotFoundError: Si el archivo SQLite no existe.
-        sqlite3.OperationalError: Si la tabla 'partidos' no existe.
+        sqlite3.OperationalError: Si la tabla 'fixtures' no existe.
     """
     try:
         conexion = sqlite3.connect(db_path)
-        df = pd.read_sql_query("SELECT * FROM partidos", conexion)
+        df = pd.read_sql_query("SELECT * FROM fixtures", conexion)
         conexion.close()
         
-        print(f"✓ Datos cargados correctamente: {len(df)} partidos")
+        # Renombrar columnas para consistencia interna
+        df = df.rename(columns={
+            'date': 'fecha',
+            'home_team': 'equipo_local',
+            'away_team': 'equipo_visitante',
+            'home_goals': 'goles_local',
+            'away_goals': 'goles_visitante'
+        })
+        
+        print(f"✓ Datos cargados correctamente: {len(df)} partidos desde tabla 'fixtures'")
         return df
     
     except FileNotFoundError:
         raise FileNotFoundError(f"El archivo SQLite no existe en: {db_path}")
     except sqlite3.OperationalError as e:
-        raise sqlite3.OperationalError(f"Error al acceder a la tabla 'partidos': {str(e)}")
+        raise sqlite3.OperationalError(f"Error al acceder a la tabla 'fixtures': {str(e)}")
 
 
 def limpiar_datos(df: pd.DataFrame) -> pd.DataFrame:
@@ -77,20 +85,20 @@ def limpiar_datos(df: pd.DataFrame) -> pd.DataFrame:
     # 2. Convertir tipos de datos
     try:
         df['fecha'] = pd.to_datetime(df['fecha'])
-        df['id'] = df['id'].astype(int)
         df['goles_local'] = df['goles_local'].astype(int)
         df['goles_visitante'] = df['goles_visitante'].astype(int)
         df['equipo_local'] = df['equipo_local'].astype(str).str.strip()
         df['equipo_visitante'] = df['equipo_visitante'].astype(str).str.strip()
         print("✓ Tipos de datos convertidos correctamente")
-    except ValueError as e:
+    except (ValueError, TypeError) as e:
         raise ValueError(f"Error al convertir tipos de datos: {str(e)}")
     
-    # 3. Detectar valores nulos
-    nulos = df.isnull().sum()
+    # 3. Detectar valores nulos en columnas críticas
+    columnas_criticas = ['fecha', 'equipo_local', 'equipo_visitante', 'goles_local', 'goles_visitante']
+    nulos = df[columnas_criticas].isnull().sum()
     if nulos.any():
         print(f"⚠ Valores nulos detectados:\n{nulos[nulos > 0]}")
-        df = df.dropna()
+        df = df.dropna(subset=columnas_criticas)
         print(f"✓ Filas con valores nulos eliminadas. Dataset: {len(df)} filas")
     
     # 4. Validar rangos de goles
@@ -312,18 +320,18 @@ def preparar_datos(db_path: str) -> pd.DataFrame:
     Función orquestadora principal que ejecuta todo el pipeline de preparación de datos.
     
     Pipeline:
-        1. Carga datos desde SQLite.
+        1. Carga datos desde SQLite (tabla fixtures).
         2. Limpia y valida datos (nulos, tipos, duplicados).
         3. Crea features históricas basadas en el desempeño previo.
         4. Crea la variable objetivo.
         5. Retorna el dataset enriquecido y listo para modelado.
     
     Parámetros:
-        db_path (str): Ruta al archivo SQLite (ej: 'data/premier_league.db').
+        db_path (str): Ruta al archivo SQLite (ej: 'premier_league.db').
     
     Retorna:
         pd.DataFrame: Dataset limpio y enriquecido con columnas:
-            - id, fecha, equipo_local, equipo_visitante
+            - fecha, equipo_local, equipo_visitante
             - goles_local, goles_visitante
             - promedio_goles_local, promedio_goles_visitante
             - racha_local, racha_visitante
@@ -331,7 +339,7 @@ def preparar_datos(db_path: str) -> pd.DataFrame:
             - resultado (variable objetivo)
     
     Ejemplo:
-        >>> df_preparado = preparar_datos('data/premier_league.db')
+        >>> df_preparado = preparar_datos('premier_league.db')
         >>> print(df_preparado.shape)
         >>> print(df_preparado.head())
     """
@@ -376,7 +384,7 @@ def preparar_datos(db_path: str) -> pd.DataFrame:
 
 if __name__ == "__main__":
     # Ejemplo de uso
-    df_preparado = preparar_datos('data/premier_league.db')
+    df_preparado = preparar_datos('premier_league.db')
     print("\n📊 Primeras 5 filas del dataset preparado:")
     print(df_preparado.head())
     print("\n📈 Información estadística:")

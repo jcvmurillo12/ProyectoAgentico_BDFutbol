@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, Tuple, List
 from datetime import datetime
+import os
 
 
 def calcular_estadisticas_descriptivas(df: pd.DataFrame) -> Dict[str, any]:
@@ -202,6 +203,9 @@ def generar_grafica_distribucion_resultados(df: pd.DataFrame, figsize: Tuple[int
         df (pd.DataFrame): DataFrame con columna 'resultado'.
         figsize (Tuple): Tamaño de la figura (ancho, alto).
     """
+    # Crear carpeta si no existe
+    os.makedirs('graphs', exist_ok=True)
+    
     plt.figure(figsize=figsize)
     
     # Orden específico para las clases
@@ -499,7 +503,7 @@ if __name__ == "__main__":
     # Ejemplo de uso (requiere que exista el archivo de datos)
     from scripts.skills.skill_preparacion import preparar_datos
     
-    df_preparado = preparar_datos('data/premier_league.db')
+    df_preparado = preparar_datos('premier_league.db')
     reporte_eda = ejecutar_eda(df_preparado)
     
     print("\n📄 Reporte EDA generado:")
