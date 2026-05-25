@@ -33,6 +33,9 @@ def calcular_estadisticas_descriptivas(df: pd.DataFrame) -> Dict[str, any]:
             - cantidad_equipos: número único de equipos
             - promedio_goles_por_partido: promedio de goles totales
     """
+    # Convertir columna 'fecha' a datetime
+    df['fecha'] = pd.to_datetime(df['fecha'])
+    
     estadisticas = {
         'cantidad_partidos': len(df),
         'rango_fechas': (df['fecha'].min(), df['fecha'].max()),
@@ -205,7 +208,9 @@ def generar_grafica_distribucion_resultados(df: pd.DataFrame, figsize: Tuple[int
         figsize (Tuple): Tamaño de la figura (ancho, alto).
     """
     # Crear carpeta si no existe
-    os.makedirs('graphs', exist_ok=True)
+    graphs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'graphs')
+    graphs_dir = os.path.abspath(graphs_dir)
+    os.makedirs(graphs_dir, exist_ok=True)
     
     plt.figure(figsize=figsize)
     
@@ -232,8 +237,9 @@ def generar_grafica_distribucion_resultados(df: pd.DataFrame, figsize: Tuple[int
     
     plt.grid(axis='y', alpha=0.3, linestyle='--')
     plt.tight_layout()
-    plt.savefig('graphs/01_distribucion_resultados.png', dpi=300, bbox_inches='tight')
-    print("✓ Gráfica 1 guardada: graphs/01_distribucion_resultados.png")
+    archivo = os.path.join(graphs_dir, '01_distribucion_resultados.png')
+    plt.savefig(archivo, dpi=300, bbox_inches='tight')
+    print(f"✓ Gráfica 1 guardada: {archivo}")
     plt.close()
 
 
@@ -246,6 +252,11 @@ def generar_grafica_promedio_goles_por_equipo(df: pd.DataFrame, top_n: int = 10,
         top_n (int): Número de equipos a mostrar (default: 10).
         figsize (Tuple): Tamaño de la figura (ancho, alto).
     """
+    # Crear carpeta si no existe
+    graphs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'graphs')
+    graphs_dir = os.path.abspath(graphs_dir)
+    os.makedirs(graphs_dir, exist_ok=True)
+    
     # Calcular promedios por equipo
     goles_local_por_equipo = df.groupby('equipo_local')['goles_local'].mean().sort_values(ascending=False).head(top_n)
     goles_visitante_por_equipo = df.groupby('equipo_visitante')['goles_visitante'].mean().sort_values(ascending=False).head(top_n)
@@ -283,8 +294,9 @@ def generar_grafica_promedio_goles_por_equipo(df: pd.DataFrame, top_n: int = 10,
     ax.grid(axis='x', alpha=0.3, linestyle='--')
     
     plt.tight_layout()
-    plt.savefig('graphs/02_promedio_goles_equipos.png', dpi=300, bbox_inches='tight')
-    print("✓ Gráfica 2 guardada: graphs/02_promedio_goles_equipos.png")
+    archivo = os.path.join(graphs_dir, '02_promedio_goles_equipos.png')
+    plt.savefig(archivo, dpi=300, bbox_inches='tight')
+    print(f"✓ Gráfica 2 guardada: {archivo}")
     plt.close()
 
 
@@ -297,6 +309,11 @@ def generar_heatmap_correlacion(df: pd.DataFrame, matriz_corr: pd.DataFrame, fig
         matriz_corr (pd.DataFrame): Matriz de correlación precomputada.
         figsize (Tuple): Tamaño de la figura (ancho, alto).
     """
+    # Crear carpeta si no existe
+    graphs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'graphs')
+    graphs_dir = os.path.abspath(graphs_dir)
+    os.makedirs(graphs_dir, exist_ok=True)
+    
     plt.figure(figsize=figsize)
     
     # Crear heatmap
@@ -315,8 +332,9 @@ def generar_heatmap_correlacion(df: pd.DataFrame, matriz_corr: pd.DataFrame, fig
     
     plt.title('Matriz de Correlación entre Features Numéricas', fontsize=14, fontweight='bold', pad=20)
     plt.tight_layout()
-    plt.savefig('graphs/03_heatmap_correlacion.png', dpi=300, bbox_inches='tight')
-    print("✓ Gráfica 3 guardada: graphs/03_heatmap_correlacion.png")
+    archivo = os.path.join(graphs_dir, '03_heatmap_correlacion.png')
+    plt.savefig(archivo, dpi=300, bbox_inches='tight')
+    print(f"✓ Gráfica 3 guardada: {archivo}")
     plt.close()
 
 

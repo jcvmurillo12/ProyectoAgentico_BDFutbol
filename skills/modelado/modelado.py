@@ -76,6 +76,15 @@ def dividir_datos(X: np.ndarray, y: np.ndarray, test_size: float = 0.2, random_s
     Retorna:
         Tuple: (X_train, X_test, y_train, y_test)
     """
+    # Convertir tipos de datos para compatibilidad con sklearn
+    import numpy as np
+    if hasattr(X, 'values'):
+        X = X.values
+    X = np.array(X, dtype=float)
+    if hasattr(y, 'values'):
+        y = y.values
+    y = np.array(y, dtype=str)
+    
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, 
         test_size=test_size, 
@@ -123,7 +132,6 @@ def entrenar_logistic_regression(X_train: np.ndarray, y_train: np.ndarray) -> Lo
     """
     modelo = LogisticRegression(
         max_iter=1000,
-        multi_class='multinomial',
         solver='lbfgs',
         random_state=42
     )
@@ -225,7 +233,9 @@ def generar_matriz_confusion(metricas_modelo: Dict[str, Any], figsize: Tuple[int
         figsize (Tuple): Tamaño de la figura.
     """
     # Crear carpeta si no existe
-    os.makedirs('graphs', exist_ok=True)
+    graphs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'graphs')
+    graphs_dir = os.path.abspath(graphs_dir)
+    os.makedirs(graphs_dir, exist_ok=True)
     
     cm = metricas_modelo['confusion_matrix']
     nombre = metricas_modelo['nombre'].replace(" ", "_").lower()
@@ -250,7 +260,7 @@ def generar_matriz_confusion(metricas_modelo: Dict[str, Any], figsize: Tuple[int
     plt.ylabel('Valor Real', fontsize=12, fontweight='bold')
     plt.tight_layout()
     
-    archivo = f'graphs/04_matriz_confusion_{nombre}.png'
+    archivo = os.path.join(graphs_dir, f'04_matriz_confusion_{nombre}.png')
     plt.savefig(archivo, dpi=300, bbox_inches='tight')
     print(f"✓ Matriz de confusión guardada: {archivo}")
     plt.close()
@@ -266,7 +276,9 @@ def generar_comparacion_modelos(metricas_lr: Dict[str, Any], metricas_rf: Dict[s
         figsize (Tuple): Tamaño de la figura.
     """
     # Crear carpeta si no existe
-    os.makedirs('graphs', exist_ok=True)
+    graphs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'graphs')
+    graphs_dir = os.path.abspath(graphs_dir)
+    os.makedirs(graphs_dir, exist_ok=True)
     
     modelos = [metricas_lr['nombre'], metricas_rf['nombre']]
     accuracy_vals = [metricas_lr['accuracy'], metricas_rf['accuracy']]
@@ -299,8 +311,9 @@ def generar_comparacion_modelos(metricas_lr: Dict[str, Any], metricas_rf: Dict[s
                    ha='center', va='bottom', fontsize=9, fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig('graphs/05_comparacion_modelos.png', dpi=300, bbox_inches='tight')
-    print("✓ Gráfica de comparación guardada: graphs/05_comparacion_modelos.png")
+    archivo = os.path.join(graphs_dir, '05_comparacion_modelos.png')
+    plt.savefig(archivo, dpi=300, bbox_inches='tight')
+    print(f"✓ Gráfica de comparación guardada: {archivo}")
     plt.close()
 
 
@@ -504,7 +517,7 @@ def ejecutar_modelado(df: pd.DataFrame) -> Dict[str, Any]:
 
 if __name__ == "__main__":
     # Leer dataset preparado
-    df_preparado = pd.read_csv('data/dataset_preparado.csv')
+    df_preparado = pd.read_csv('data/dataset_preparado.csv', dtype_backend='numpy_nullable')
     
     # Ejecutar modelado
     resultados = ejecutar_modelado(df_preparado)

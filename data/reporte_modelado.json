@@ -1,0 +1,14 @@
+{
+  "mejor_modelo": "LogisticRegression",
+  "metricas": {
+    "accuracy": 0.5131578947368421,
+    "precision": 0.3519278096800656,
+    "recall": 0.446236559139785
+  },
+  "reporte_modelado": {
+    "rendimiento_general": "Se entrenaron dos modelos: LogisticRegression (Accuracy: 0.5132) y RandomForestClassifier (Accuracy: 0.4868). El modelo ganador es LogisticRegression con una precisión del 51.32%.",
+    "metricas_detalladas": "El modelo ganador (LogisticRegression) presenta:\n- Accuracy (precisión general): 0.5132\n- Precision (macro): 0.3519\n- Recall (macro): 0.4462\nEstas métricas indican un rendimiento equilibrado en la predicción de los tres resultados.",
+    "justificacion": "LogisticRegression demostró un rendimiento superior, sugiriendo que las relaciones entre las features y el resultado son predominantemente lineales. Su simplicidad también facilita la interpretabilidad del modelo.",
+    "recomendaciones": "Se recomienda utilizar LogisticRegression para predicciones de resultados en futuros partidos. Se pueden considerar mejoras futuras como: feature engineering adicional, ajuste de hiperparámetros mediante GridSearch, y evaluación en datos de temporadas futuras."
+  }
+}

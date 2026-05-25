@@ -1,0 +1,7 @@
+{
+  "estadisticas_generales": "El dataset contiene 380 partidos jugados entre 20 equipos únicos en el rango 2024-08-16 a 2025-05-25. El promedio de goles por partido es 2.93, con 1.51 goles en promedio para locales y 1.42 para visitantes.",
+  "distribucion_resultados": "La variable objetivo 'resultado' muestra: Local: 155 (40.8%), Empate: 93 (24.5%), Visitante: 132 (34.7%). Los equipos locales tienen una tasa de victoria del 40.8%, indicando una ventaja significativa del factor local.",
+  "equipos_dominantes": "El equipo más ganador como local es Liverpool con 14 victorias de 19 partidos (73.7%). Como visitante, Liverpool lidera con 11 victorias de 19 partidos (57.9%).",
+  "correlaciones_principales": "Se detectan correlaciones relevantes entre features: promedio_goles_local-racha_local: 0.75, promedio_goles_visitante-racha_visitante: 0.68. Esto sugiere que las características históricas están moderadamente relacionadas con el desempeño.",
+  "conclusion": "El análisis exploratorio revela que existe un efecto de campo significativo en la Premier League, con una clara ventaja para los equipos locales. Las features de desempeño histórico (promedios y rachas) presentan variabilidad moderada entre equipos, lo que sugiere potencial para predictibilidad en modelos de machine learning."
+}
